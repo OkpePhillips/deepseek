@@ -39,28 +39,27 @@ def get_upcoming_games():
 
 
 def get_team_stats(team_id):
-    """Get average points scored/allowed for a team's last 10 games."""
+    """Get average points scored for a team's last 10 games."""
     try:
         gamelog = teamgamelog.TeamGameLog(team_id=team_id, timeout=10)
         df = gamelog.get_data_frames()[0].head(10)
+        if df.empty:
+            return None  # No games found
         avg_scored = df["PTS"].mean()
-        avg_allowed = df["OPP_PTS"].mean()
-        return avg_scored, avg_allowed
-    except:
-        # Fallback if no data (e.g., preseason)
-        return 110.0, 110.0  # Mock averages
+        return avg_scored
+    except Exception as e:
+        print(f"Error fetching stats for team {team_id}: {e}")
+        return None
 
 
 @app.route("/")
 def index():
-    """Show upcoming games."""
     games = get_upcoming_games()
     return render_template("index.html", games=games)
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    """Handle prediction request."""
     selected_indices = request.form.getlist("game_index")
     games = get_upcoming_games()
     predictions = []
@@ -72,12 +71,21 @@ def predict():
             home_id = game["home_team_id"]
             away_id = game["away_team_id"]
 
-            # Get stats for both teams
-            home_scored, _ = get_team_stats(home_id)
-            _, away_allowed = get_team_stats(away_id)
+            # Get stats for BOTH teams
+            home_avg = get_team_stats(home_id)
+            away_avg = get_team_stats(away_id)
 
-            # Simple prediction model
-            predicted_total = round((home_scored + away_allowed) * 0.5)
+            if home_avg is None or away_avg is None:
+                predictions.append(
+                    {
+                        "matchup": f"{game['home_team']} vs {game['away_team']}",
+                        "total": "Data unavailable",
+                    }
+                )
+                continue
+
+            # Correct formula: Total = Home Avg + Away Avg
+            predicted_total = round(home_avg + away_avg)
 
             predictions.append(
                 {
@@ -85,7 +93,8 @@ def predict():
                     "total": predicted_total,
                 }
             )
-        except:
+        except Exception as e:
+            print(f"Error processing game {index}: {e}")
             continue
 
     return render_template("results.html", predictions=predictions)
