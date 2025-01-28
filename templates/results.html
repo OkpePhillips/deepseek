@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .prediction { margin: 15px 0; padding: 10px; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <h1>Predicted Total Points</h1>
+    {% for pred in predictions %}
+    <div class="prediction">
+        <strong>{{ pred.matchup }}</strong>: {{ pred.total }} points
+    </div>
+    {% else %}
+    <p>No games selected.</p>
+    {% endfor %}
+    <a href="/">Back to Games</a>
+</body>
+</html>

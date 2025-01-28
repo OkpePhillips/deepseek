@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basketball Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .game { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>Select Games (Next 7 Days)</h1>
+    <form action="/predict" method="post">
+        {% for game in games %}
+        <div class="game">
+            <input type="checkbox" name="game_index" value="{{ loop.index0 }}">
+            {{ game.home_team }} vs {{ game.away_team }} 
+            <small>({{ game.date[:10] }})</small>
+        </div>
+        {% endfor %}
+        <button type="submit">Predict Total Points</button>
+    </form>
+</body>
+</html>

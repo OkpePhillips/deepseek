@@ -1,0 +1,63 @@
+# .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+site-packages/
+
+# Flask
+instance/
+.webassets-cache
+
+# Environment variables
+.env
+.flaskenv
+env.sh
+secrets.yml
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Local development
+*.db
+*.sqlite
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+
+# Build/distribution
+dist/
+build/
+*.egg-info/
+*.manifest
+*.spec
+
+# Node.js (if you add frontend later)
+node_modules/
